@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface VendedorRepository extends JpaRepository<Vendedor,Long> {
 
     Optional<Vendedor>findByIdAndAtivoTrue(Long id);
+    Optional<Vendedor>findByNomeAndSobrenomeAndAtivoTrue(String nome, String sobrenome);
     Optional<Vendedor>findAllByAtivoTrue();
 }
