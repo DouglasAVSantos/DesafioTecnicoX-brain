@@ -1,6 +1,7 @@
 package com.desafio.XBrain.vendedor.entity;
 
 import com.desafio.XBrain.venda.entity.Venda;
+import com.desafio.XBrain.vendedor.dto.VendedorRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,7 +26,12 @@ public class Vendedor {
     private String sobrenome;
     @Column(name = "nome_completo")
     private String nomeCompleto;
-    @Column(name = "lista_de_vendas")
-    private List<Venda> listaDeVendas = new ArrayList<>();
     private Boolean ativo;
+
+    public Vendedor(VendedorRequestDto dto){
+        nome = dto.nome();
+        sobrenome = dto.sobrenome();
+        nomeCompleto = dto.nomeCompleto();
+        ativo = true;
+    }
 }
