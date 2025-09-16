@@ -3,6 +3,7 @@ package com.desafio.XBrain.vendedor.dto;
 import com.desafio.XBrain.vendedor.entity.Vendedor;
 
 public record VendedorResponseDto(
+        Long id,
         String nome,
         String sobrenome
 ) {
@@ -11,6 +12,6 @@ public record VendedorResponseDto(
     }
 
     public VendedorResponseDto(Vendedor vendedor) {
-        this(vendedor.getNome(), vendedor.getSobrenome());
+        this(vendedor.getId(), vendedor.getNome(), vendedor.getSobrenome());
     }
 }
