@@ -1,6 +1,6 @@
 package com.desafio.XBrain.vendedor.service;
 
-import com.desafio.XBrain.shared.exception.ConclictException;
+import com.desafio.XBrain.shared.exception.ConflictException;
 import com.desafio.XBrain.shared.exception.NotFoundException;
 import com.desafio.XBrain.vendedor.dto.VendedorRequestDto;
 import com.desafio.XBrain.vendedor.dto.VendedorResponseDto;
@@ -19,7 +19,7 @@ public class VendedorService {
 
     public VendedorResponseDto cadastrar(VendedorRequestDto request) {
         if (repository.findByNomeAndSobrenomeAndAtivoTrue(request.nome(), request.sobrenome()).isPresent()) {
-            throw new ConclictException("Vendedor '" + request.nomeCompleto() + "' já cadastrado");
+            throw new ConflictException("Vendedor '" + request.nomeCompleto() + "' já cadastrado");
         }
         Vendedor novoVendedor = new Vendedor(request);
         return new VendedorResponseDto(repository.save(novoVendedor));

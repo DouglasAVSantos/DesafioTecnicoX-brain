@@ -4,9 +4,9 @@ import com.desafio.XBrain.vendedor.entity.Vendedor;
 import jakarta.validation.constraints.NotBlank;
 
 public record VendedorRequestDto(
-        @NotBlank
+        @NotBlank(message = "Campo obrigatório")
         String nome,
-        @NotBlank
+        @NotBlank(message = "Campo obrigatório")
         String sobrenome
 
 ) {
