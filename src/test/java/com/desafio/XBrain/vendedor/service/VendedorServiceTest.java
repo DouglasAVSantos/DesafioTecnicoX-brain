@@ -32,86 +32,86 @@ public class VendedorServiceTest {
     private Vendedor vendedor;
 
     @BeforeEach
-    void setUp(){
-        request = new VendedorRequestDto("Douglas","Santos");
+    void setUp() {
+        request = new VendedorRequestDto("Douglas", "Santos");
         vendedor = new Vendedor(request);
         vendedor.setId(1L);
         response = new VendedorResponseDto(vendedor);
     }
 
     @Test
-    void deveCadastrarComSucesso(){
-        when(repository.findByNomeAndSobrenomeAndAtivoTrue(request.nome(),request.sobrenome())).thenReturn(Optional.empty());
+    void deveCadastrarComSucesso() {
+        when(repository.findByNomeAndSobrenomeAndAtivoTrue(request.nome(), request.sobrenome())).thenReturn(Optional.empty());
         when(repository.save(any(Vendedor.class))).thenReturn(vendedor);
 
         VendedorResponseDto result = service.cadastrar(request);
 
-        assertEquals(result.nome(),"douglas");
-        assertEquals(result.sobrenome(),"santos");
-        assertEquals(result.id(),1);
+        assertEquals(result.nome(), "douglas");
+        assertEquals(result.sobrenome(), "santos");
+        assertEquals(result.id(), 1);
 
-        verify(repository).findByNomeAndSobrenomeAndAtivoTrue(request.nome(),request.sobrenome());
+        verify(repository).findByNomeAndSobrenomeAndAtivoTrue(request.nome(), request.sobrenome());
         verify(repository).save(any(Vendedor.class));
     }
 
     @Test
-    void deveLancarConflictExceptionAoCadastrar(){
-        when(repository.findByNomeAndSobrenomeAndAtivoTrue(request.nome(),request.sobrenome())).thenReturn(Optional.of(vendedor));
+    void deveLancarConflictExceptionAoCadastrar() {
+        when(repository.findByNomeAndSobrenomeAndAtivoTrue(request.nome(), request.sobrenome())).thenReturn(Optional.of(vendedor));
 
         ConflictException ex = assertThrows(ConflictException.class,
-                ()-> service.cadastrar(request));
+                () -> service.cadastrar(request));
 
-        assertEquals(ex.getMessage(),"Vendedor '" + request.nomeCompleto() + "' já cadastrado");
+        assertEquals(ex.getMessage(), "Vendedor '" + request.nomeCompleto() + "' já cadastrado");
 
-        verify(repository).findByNomeAndSobrenomeAndAtivoTrue(request.nome(),request.sobrenome());
-        verify(repository,never()).save(any(Vendedor.class));
+        verify(repository).findByNomeAndSobrenomeAndAtivoTrue(request.nome(), request.sobrenome());
+        verify(repository, never()).save(any(Vendedor.class));
     }
 
     @Test
-    void deveBuscarVendedorComSucesso(){
+    void deveBuscarVendedorComSucesso() {
         when(repository.findByIdAndAtivoTrue(1L)).thenReturn(Optional.of(vendedor));
 
         VendedorResponseDto result = service.getVendedor(1L);
 
-        assertEquals(1L,result.id());
-        assertEquals("douglas",result.nome());
-        assertEquals("santos",result.sobrenome());
-        assertEquals("douglas santos",result.nomeCompleto());
+        assertEquals(1L, result.id());
+        assertEquals("douglas", result.nome());
+        assertEquals("santos", result.sobrenome());
+        assertEquals("douglas santos", result.nomeCompleto());
 
         verify(repository).findByIdAndAtivoTrue(1L);
     }
 
     @Test
-    void deveLancarNotFoundExceptionAoBuscarVendedor(){
+    void deveLancarNotFoundExceptionAoBuscarVendedor() {
         when(repository.findByIdAndAtivoTrue(1L)).thenReturn(Optional.empty());
 
-        NotFoundException result = assertThrows(NotFoundException.class,()->service.getVendedor(1L));
+        NotFoundException result = assertThrows(NotFoundException.class, () -> service.getVendedor(1L));
 
-        assertEquals("Vendedor não encontrado para o id: 1",result.getMessage());
+        assertEquals("Vendedor não encontrado para o id: 1", result.getMessage());
 
         verify(repository).findByIdAndAtivoTrue(1L);
     }
 
     @Test
-    void deveRetornarListaComSucesso(){
-        Vendedor vendedorTeste = new Vendedor(2L,"marcos","silva","marcos silva",true);
-        List<Vendedor> listaTeste = List.of(vendedor,vendedorTeste);
+    void deveRetornarListaComSucesso() {
+        Vendedor vendedorTeste = new Vendedor(2L, "marcos", "silva", "marcos silva", true);
+        List<Vendedor> listaTeste = List.of(vendedor, vendedorTeste);
         when(repository.findAllByAtivoTrue()).thenReturn(listaTeste);
 
         List<VendedorResponseDto> listaResult = service.getLista();
 
-        assertEquals(2,listaResult.size());
-        assertEquals(listaResult.get(0).nomeCompleto(),"douglas santos");
-        assertEquals(listaResult.get(1).nomeCompleto(),"marcos silva");
+        assertEquals(2, listaResult.size());
+        assertEquals(listaResult.get(0).nomeCompleto(), "douglas santos");
+        assertEquals(listaResult.get(1).nomeCompleto(), "marcos silva");
 
         verify(repository).findAllByAtivoTrue();
     }
 
     @Test
-    void deveDeletarVendedorComSucesso(){
+    void deveDeletarVendedorComSucesso() {
         when(repository.findByIdAndAtivoTrue(1L)).thenReturn(Optional.of(vendedor));
         when(repository.save(any(Vendedor.class))).thenReturn(vendedor);
-        assertDoesNotThrow(()->service.deletar(1L));
+        assertDoesNotThrow(() -> service.deletar(1L));
 
 
         verify(repository).findByIdAndAtivoTrue(1L);
@@ -119,43 +119,43 @@ public class VendedorServiceTest {
     }
 
     @Test
-    void deveLancarNoFoundExceptionAoDeletarVendedor(){
+    void deveLancarNoFoundExceptionAoDeletarVendedor() {
         when(repository.findByIdAndAtivoTrue(1L)).thenReturn(Optional.empty());
 
-        NotFoundException result = assertThrows(NotFoundException.class,()->service.deletar(1L));
+        NotFoundException result = assertThrows(NotFoundException.class, () -> service.deletar(1L));
 
-        assertEquals("Vendedor não encontrado para o id: 1",result.getMessage());
+        assertEquals("Vendedor não encontrado para o id: 1", result.getMessage());
 
         verify(repository).findByIdAndAtivoTrue(1L);
-        verify(repository,never()).save(any(Vendedor.class));
+        verify(repository, never()).save(any(Vendedor.class));
     }
 
     @Test
-    void deveAtualizarComSucesso(){
-        VendedorRequestDto atualizado = new VendedorRequestDto("marcos","silva");
+    void deveAtualizarComSucesso() {
+        VendedorRequestDto atualizado = new VendedorRequestDto("marcos", "silva");
         when(repository.findByIdAndAtivoTrue(1L)).thenReturn(Optional.of(vendedor));
         when(repository.save(any(Vendedor.class))).thenReturn(vendedor);
 
-        VendedorResponseDto result = service.atualizar(1L,atualizado);
+        VendedorResponseDto result = service.atualizar(1L, atualizado);
 
-        assertEquals(result.nomeCompleto(),"marcos silva");
-        assertEquals(result.id(),1);
+        assertEquals(result.nomeCompleto(), "marcos silva");
+        assertEquals(result.id(), 1);
 
         verify(repository).findByIdAndAtivoTrue(1L);
         verify(repository).save(any(Vendedor.class));
     }
 
     @Test
-    void deveLancarNoFoundExceptionAoAtualizarVendedor(){
-        VendedorRequestDto atualizado = new VendedorRequestDto("marcos","silva");
+    void deveLancarNoFoundExceptionAoAtualizarVendedor() {
+        VendedorRequestDto atualizado = new VendedorRequestDto("marcos", "silva");
         when(repository.findByIdAndAtivoTrue(1L)).thenReturn(Optional.empty());
 
-        NotFoundException result = assertThrows(NotFoundException.class,()->service.atualizar(1L,atualizado));
+        NotFoundException result = assertThrows(NotFoundException.class, () -> service.atualizar(1L, atualizado));
 
-        assertEquals("Vendedor não encontrado para o id: 1",result.getMessage());
+        assertEquals("Vendedor não encontrado para o id: 1", result.getMessage());
 
         verify(repository).findByIdAndAtivoTrue(1L);
-        verify(repository,never()).save(any(Vendedor.class));
+        verify(repository, never()).save(any(Vendedor.class));
     }
 
 
