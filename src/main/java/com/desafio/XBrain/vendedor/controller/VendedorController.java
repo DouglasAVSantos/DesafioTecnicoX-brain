@@ -6,6 +6,7 @@ import com.desafio.XBrain.vendedor.service.VendedorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,12 @@ public class VendedorController {
     private final VendedorService service;
 
     @PostMapping
+    @Transactional
     @Operation(description = "Endpoint responsável por cadastrar novos vendedores")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Vendedor criado com sucesso"),
             @ApiResponse(responseCode = "409", description = "Vendedor já cadastrado"),
+            @ApiResponse(responseCode = "400", description = "Erro de validação: campos obrigatórios ausentes ou formato inválido"),
     })
     public ResponseEntity<VendedorResponseDto> cadastrar(@RequestBody @Valid VendedorRequestDto request) {
         VendedorResponseDto novoVendedor = service.cadastrar(request);
@@ -37,6 +40,7 @@ public class VendedorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Vendedor retornado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Vendedor não encontrado."),
+            @ApiResponse(responseCode = "400", description = "Erro de validação: campos obrigatórios ausentes ou formato inválido")
     })
     public ResponseEntity<VendedorResponseDto> getVendedor(@PathVariable Long id) {
         return ResponseEntity.ok(service.getVendedor(id));
@@ -52,10 +56,12 @@ public class VendedorController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     @Operation(description = "Endpoint responsável por deletar um vendedor")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Vendedor deletado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Vendedor não encontrado."),
+            @ApiResponse(responseCode = "400", description = "Erro de validação: campos obrigatórios ausentes ou formato inválido")
     })
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         service.deletar(id);
@@ -63,10 +69,12 @@ public class VendedorController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     @Operation(description = "Endpoint responsável por atualizar um vendedor")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Vendedor atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Vendedor não encontrado."),
+            @ApiResponse(responseCode = "400", description = "Erro de validação: campos obrigatórios ausentes ou formato inválido")
     })
     public ResponseEntity<VendedorResponseDto> atualizar(@PathVariable Long id, @RequestBody @Valid VendedorRequestDto request) {
         return ResponseEntity.ok(service.atualizar(id, request));

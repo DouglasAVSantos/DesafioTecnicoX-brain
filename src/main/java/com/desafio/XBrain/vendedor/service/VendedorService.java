@@ -6,6 +6,7 @@ import com.desafio.XBrain.vendedor.dto.VendedorRequestDto;
 import com.desafio.XBrain.vendedor.dto.VendedorResponseDto;
 import com.desafio.XBrain.vendedor.entity.Vendedor;
 import com.desafio.XBrain.vendedor.repository.VendedorRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class VendedorService {
 
     private final VendedorRepository repository;
 
+    @Transactional
     public VendedorResponseDto cadastrar(VendedorRequestDto request) {
         if (repository.findByNomeAndSobrenomeAndAtivoTrue(request.nome(), request.sobrenome()).isPresent()) {
             throw new ConflictException("Vendedor '" + request.nomeCompleto() + "' já cadastrado");
@@ -33,13 +35,13 @@ public class VendedorService {
         return repository.findAllByAtivoTrue().stream().map(VendedorResponseDto::new).toList();
     }
 
-
+    @Transactional
     public void deletar(Long id) {
         Vendedor vendedorEncontrado = findById(id);
         vendedorEncontrado.setAtivo(false);
         repository.save(vendedorEncontrado);
     }
-
+    @Transactional
     public VendedorResponseDto atualizar(Long id, VendedorRequestDto request){
         Vendedor vendedorEncontrado = findById(id);
         vendedorEncontrado.setNome(request.nome());
