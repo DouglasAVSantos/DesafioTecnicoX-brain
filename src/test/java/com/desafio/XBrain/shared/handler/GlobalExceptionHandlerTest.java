@@ -2,80 +2,73 @@ package com.desafio.XBrain.shared.handler;
 
 import com.desafio.XBrain.shared.exception.ConflictException;
 import com.desafio.XBrain.shared.exception.NotFoundException;
-import com.desafio.XBrain.vendedor.controller.VendedorController;
-import com.desafio.XBrain.vendedor.dto.VendedorRequestDto;
-import com.desafio.XBrain.vendedor.service.VendedorService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import static org.mockito.ArgumentMatchers.any;
+import java.time.DateTimeException;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(VendedorController.class)
-class GlobalExceptionHandlerTest {
+@ExtendWith(MockitoExtension.class)
+public class GlobalExceptionHandlerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @InjectMocks
+    private GlobalExceptionHandler globalExceptionHandler;
 
-    @MockBean
-    private VendedorService service;
-    private VendedorRequestDto request;
+    @Mock
+    private MethodArgumentNotValidException methodArgumentNotValidException;
 
-    @BeforeEach
-    public void setUp() {
-        request = new VendedorRequestDto("Douglas", "Santos");
+    @Test
+    void deveTratarConflictException() {
+        ConflictException ex = new ConflictException("Erro de conflito");
+
+        ResponseEntity<Map<String, String>> response = globalExceptionHandler.conflictHandler(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals("Erro de conflito", response.getBody().get("erro"));
     }
 
     @Test
-    void deveRetornar409QuandoVendedorJaExiste() throws Exception {
+    void deveTratarNotFoundException() {
+        NotFoundException ex = new NotFoundException("Recurso não encontrado");
 
-        when(service.cadastrar(any())).thenThrow(
-                new ConflictException("Vendedor '" + request.nomeCompleto() + "' já cadastrado")
-        );
+        ResponseEntity<Map<String, String>> response = globalExceptionHandler.notFoundHandler(ex);
 
-        mockMvc.perform(post("/api/v1/vendedor")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                    {"nome":"Douglas","sobrenome":"Santos"}
-                                """))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.erro")
-                        .value("Vendedor 'douglas santos' já cadastrado"));
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Recurso não encontrado", response.getBody().get("erro"));
     }
 
     @Test
-    void deveRetornar400QuandoRequestInvalido() throws Exception {
+    void deveTratarDateTimeException() {
+        DateTimeException ex = new DateTimeException("Erro de data e hora");
 
-        String requestInvalido = new String("""
-                {
-                "nome":"",
-                "sobrenome":"Santos"
-                }
-                """);
-        mockMvc.perform(post("/api/v1/vendedor")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestInvalido))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.erro")
-                        .value("nome: Campo obrigatório"));
+        ResponseEntity<Map<String, String>> response = globalExceptionHandler.dateTimeHandler(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Erro de data e hora", response.getBody().get("erro"));
     }
 
     @Test
-    void deveRetornar404QuandoVendedorNaoEncontrado() throws Exception {
-        when(service.getVendedor(1L)).thenThrow(new NotFoundException("Vendedor não encontrado para o id: 1"));
+    void deveTratarMethodArgumentNotValidException() {
+        MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
+        when(ex.getDetailMessageArguments())
+                .thenReturn(new Object[]{"Registro nao encontrado"});
+        ResponseEntity<Map<String, String>> result = globalExceptionHandler.validationHandler(ex);
 
-        mockMvc.perform(get("/api/v1/vendedor/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro")
-                        .value("Vendedor não encontrado para o id: 1"));
+        assertEquals(result.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(result.getBody().values().iterator().next(), "[Registro nao encontrado]");
+        assertEquals(result.getBody().keySet().iterator().next(), "erro");
     }
 }
