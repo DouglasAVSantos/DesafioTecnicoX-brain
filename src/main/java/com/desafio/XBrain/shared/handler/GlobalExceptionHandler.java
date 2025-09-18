@@ -33,6 +33,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> validationHandler(MethodArgumentNotValidException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                Map.of("erro", Arrays.stream(ex.getDetailMessageArguments()).filter(c -> !c.equals(new String(""))).iterator().next().toString()));
+                Map.of("erro", Arrays.toString(ex.getDetailMessageArguments()).replaceFirst(", ","")));
     }
 }
