@@ -30,6 +30,6 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
                 group by vend.id, vend.nome_completo
                 order by vend.id
             """, nativeQuery = true)
-    List<RelatorioDeVendas> getLista(@Param("inicio") LocalDate inicio
+    List<RelatorioDeVendas> getRelatorio(@Param("inicio") LocalDate inicio
             , @Param("fim") LocalDate fim);
 }

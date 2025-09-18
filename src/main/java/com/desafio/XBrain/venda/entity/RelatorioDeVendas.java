@@ -15,7 +15,7 @@ public class RelatorioDeVendas {
     private Long quantidade;
     private BigDecimal media;
 
-    private RelatorioDeVendas(Long id, String nome, Long quantidade){
+    public RelatorioDeVendas(Long id, String nome, Long quantidade){
         this.id = id;
         this.nome = nome;
         this.quantidade = quantidade;

@@ -28,6 +28,14 @@ public class Vendedor {
     private String nomeCompleto;
     private Boolean ativo;
 
+    public Vendedor(Long id, String nome, String sobrenome) {
+        this.id = id;
+        this.nome = nome;
+        this.sobrenome = sobrenome;
+        this.nomeCompleto = nome+" "+sobrenome;
+        this.ativo = true;
+    }
+
     public Vendedor(VendedorRequestDto dto){
         nome = dto.nome();
         sobrenome = dto.sobrenome();

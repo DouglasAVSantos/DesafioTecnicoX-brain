@@ -7,6 +7,7 @@ import com.desafio.XBrain.venda.service.VendaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,6 +33,7 @@ public class VendaController {
             @ApiResponse(responseCode = "201", description = "Venda criada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Json inválido"),
     })
+    @Transactional
     public ResponseEntity<VendaResponseDto> cadastra(@RequestBody @Valid VendaRequestDto request) {
         VendaResponseDto response = service.cadastrar(request);
         return ResponseEntity.created(URI.create("/api/v1/venda/" + response.id())).body(response);
@@ -73,7 +75,9 @@ public class VendaController {
         return ResponseEntity.ok(service.get(id));
     }
 
+
     @DeleteMapping("/{id}")
+    @Transactional
     @Operation(
             summary = "Cancelar venda por ID",
             description = "Endpoint responsável por cancelar uma venda especifica"
@@ -88,6 +92,7 @@ public class VendaController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     @Operation(
             summary = "Atualizar venda por ID",
             description = "Endpoint responsável por atualizar uma venda especifica existente"

@@ -35,10 +35,10 @@ public class VendaService {
 
     public List<RelatorioDeVendasDto> getRelatorio(LocalDate inicio, LocalDate fim) {
         if (inicio.isAfter(fim)) {
-            throw new DateTimeException("Data inicial informada é após a data final");
+            throw new DateTimeException("Data inicial informada é posterior a data final");
         }
         Long diferencaDeDias = Math.max(1, ChronoUnit.DAYS.between(inicio, fim));
-        return repository.getLista(inicio, fim)
+        return repository.getRelatorio(inicio, fim)
                 .stream()
                 .map(object ->
                         new RelatorioDeVendasDto(object.addMedia(
