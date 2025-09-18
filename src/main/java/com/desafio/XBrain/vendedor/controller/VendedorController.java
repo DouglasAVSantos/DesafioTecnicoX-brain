@@ -24,7 +24,9 @@ public class VendedorController {
 
     @PostMapping
     @Transactional
-    @Operation(description = "Endpoint responsável por cadastrar novos vendedores")
+    @Operation(
+            summary = "Cadastra Vendedor",
+            description = "Endpoint responsável por cadastrar novos vendedores")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Vendedor criado com sucesso"),
             @ApiResponse(responseCode = "409", description = "Vendedor já cadastrado"),
@@ -36,7 +38,9 @@ public class VendedorController {
     }
 
     @GetMapping("/{id}")
-    @Operation(description = "Endpoint responsável por retornar um vendedor")
+    @Operation(
+            summary = "Busca vendedor por ID",
+            description = "Endpoint responsável por retornar um vendedor especifico")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Vendedor retornado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Vendedor não encontrado."),
@@ -47,7 +51,9 @@ public class VendedorController {
     }
 
     @GetMapping("/")
-    @Operation(description = "Endpoint responsável por listar todos vendedores")
+    @Operation(
+            summary = "Listar vendedores",
+            description = "Endpoint responsável por listar todos vendedores")
     @ApiResponses(value =
     @ApiResponse(responseCode = "200", description = "Lista de vendedores retornado com sucesso")
     )
@@ -57,7 +63,9 @@ public class VendedorController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    @Operation(description = "Endpoint responsável por deletar um vendedor")
+    @Operation(
+            summary = "Excluir vendedor",
+            description = "Endpoint responsável por deletar um vendedor")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Vendedor deletado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Vendedor não encontrado."),
@@ -70,7 +78,9 @@ public class VendedorController {
 
     @PutMapping("/{id}")
     @Transactional
-    @Operation(description = "Endpoint responsável por atualizar um vendedor")
+    @Operation(
+            summary = "Atualizar vendedor",
+            description = "Endpoint responsável por atualizar um vendedor")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Vendedor atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Vendedor não encontrado."),

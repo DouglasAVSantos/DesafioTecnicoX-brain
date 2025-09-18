@@ -1,7 +1,7 @@
 package com.desafio.XBrain.venda.repository;
 
-import com.desafio.XBrain.venda.entity.Venda;
 import com.desafio.XBrain.venda.entity.RelatorioDeVendas;
+import com.desafio.XBrain.venda.entity.Venda;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +14,9 @@ import java.util.Optional;
 @Repository
 public interface VendaRepository extends JpaRepository<Venda, Long> {
 
-    Optional<Venda> findByIdAndAtivoTrue(Long id);
+    Optional<Venda> findByIdAndCanceladaFalse(Long id);
+
+    List<Venda> findAllByCanceladaFalse();
 
     @Query(value = """
                 select
@@ -23,7 +25,7 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
                   count(v.id)
                 from vendas v
                 join vendedores vend on vend.id = v.vendedor_id
-                where v.ativo = true
+                where v.cancelada = false
                   and v.data_da_venda between :inicio and :fim
                 group by vend.id, vend.nome_completo
                 order by vend.id

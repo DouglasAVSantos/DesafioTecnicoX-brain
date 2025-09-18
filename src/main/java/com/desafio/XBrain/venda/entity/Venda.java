@@ -25,12 +25,12 @@ public class Venda {
     @ManyToOne
     @JoinColumn(name = "vendedor_id")
     private Vendedor vendedor;
-    private Boolean ativo;
+    private Boolean cancelada;
 
     public Venda(VendaRequestDto requestVenda, Vendedor vendedor) {
         this.dataDaVenda = LocalDate.now();
         this.valor = requestVenda.valor();
         this.vendedor = vendedor;
-        this.ativo = true;
+        this.cancelada = false;
     }
 }
